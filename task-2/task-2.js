@@ -40,16 +40,6 @@ function getRandBetween(min, max, step) {
   return (Math.random() * (max - min) + min).toFixed(Math.log10(1/step));
 }
 
-function getRandName(length = 4) {
-  let name = '';
-  while (name.length < length - 1) {
-    name += String.fromCharCode(getRandBetween(97,122));
-  }
-  name = String.fromCharCode(getRandBetween(65, 90)) + name;
-  return name;
-}
-
-
 function* createGameLoop() {
   while (true) {
     yield battle(gladiators);
@@ -70,7 +60,7 @@ function pause() {
 
 class Gladiator {
   constructor() {
-    this.name = getRandName();
+    this.name = faker.name.findName();
     this.initialHealth = getRandBetween(80,100,1);
     this.currentHealth = this.initialHealth;
     this.power = getRandBetween(2,5,0.1);
@@ -156,7 +146,7 @@ function battle(gladiators) {
 }
 
 function decideFate(gladiator) {
-  if (Math.random() > 0.5) {
+  if (Math.random() < 0.5) {
     console.log(`Caesar showed :+1: to [${gladiator.name}]`);
     gladiator.revive();
   } else {
@@ -179,4 +169,3 @@ const g3 = new Gladiator();
 
 const gladiators = [g1, g2, g3];
 
-start();
