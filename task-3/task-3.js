@@ -42,9 +42,11 @@ class Gladiator {
   }
 
   hit(anotherGladiator) {
-    console.log(`[${this.name} x ${this.currentHealth}] hits [${anotherGladiator.name} x ${anotherGladiator.currentHealth}] with power ${this.power}`);
-    this.readyToHit = false;
-    this.rest(6 - this.currentSpeed);
+    const message = `[${this.name} x ${this.currentHealth}] hits [${anotherGladiator.name} x ${anotherGladiator.currentHealth}] with power ${this.power}`;
+    console.log(message);
+    log(message);
+    this.isReadyToHit = false;
+    this.rest(6000 - this.currentSpeed * 1000);
     return new Promise((survived, died) => {
       anotherGladiator.takeDamage(this.power);
       if (anotherGladiator.isDead) {
@@ -58,12 +60,17 @@ class Gladiator {
   takeDamage(damage) {
     this.currentHealth = Math.round(this.currentHealth - damage);
     this.currentSpeed = this.initialSpeed * (this.currentHealth / this.initialHealth);
+    
+    if (this.isInBerserkMode)
+      this.currentSpeed *= 3;
+
     if (this.currentHealth >= 15 && this.currentHealth <= 30 && !this.isInBerserkMode) {
       this.goBerserk(); 
-    } else if (this.isInBerserkMode) {
+    } else if ((this.currentHealth < 15 || this.currentHealth > 30) && this.isInBerserkMode) {
       this.calmDown();
     } else if (this.currentHealth <= 0) {
       console.log(`[${this.name}] dying...`)
+      log(`[${this.name}] dying...`);
       clearTimeout(this.restTimer);
       this.isDead = true;
       this.isReadyToHit = false;
@@ -81,6 +88,7 @@ class Gladiator {
 
   goBerserk() {
     console.log(`${this.name} goes BERSERK!!!`);
+    log(`${this.name} goes BERSERK!!!`);
     this.currentSpeed *= 3;
     this.isInBerserkMode = true;
   }
@@ -120,9 +128,11 @@ function battle(gladiators) {
 function decideFate(gladiator) {
   if (Math.random() < 0.5) {
     console.log(`Caesar showed :+1: to [${gladiator.name}]`);
+    log(`Caesar showed :+1: to [${gladiator.name}]`);
     gladiator.revive();
   } else {
     console.log(`Caesar showed :-1: to [${gladiator.name}]`);
+    log(`Caesar showed :-1: to [${gladiator.name}]`);
     const index = gladiators.indexOf(gladiator);
     gladiators.splice(index, 1);
   }
@@ -165,9 +175,9 @@ beginButton.addEventListener('click', ()=>{
 
 function populateArena(gladiators) {
   const arena = document.getElementById('arena');
-  while (arena.childNodes.length>0) {
-    arena.childNodes[0].remove();
-  }
+  clearArena();
+  clearBattlelog();
+  displayResult('');
   gladiators.forEach(gladiator => {
     const gladiatorNode = document.createElement('div');
     gladiator.node = gladiatorNode;
@@ -179,4 +189,25 @@ function populateArena(gladiators) {
 
 function displayResult(result) {
   document.getElementById('result').innerText = result;
+}
+
+function log(message) {
+  const battlelog = document.getElementById('battlelog');
+  const node = document.createElement('p');
+  node.innerText = message;
+  battlelog.insertBefore(node, battlelog.childNodes[0]);
+}
+
+function clearArena() {
+  const arena = document.getElementById('arena');
+  while (arena.childNodes.length>0) {
+    arena.childNodes[0].remove();
+  }
+}
+
+function clearBattlelog() {
+  const battlelog = document.getElementById('battlelog');
+  while (battlelog.childNodes.length>0) {
+    battlelog.childNodes[0].remove();
+  }
 }

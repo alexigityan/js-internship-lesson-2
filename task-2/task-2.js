@@ -74,8 +74,8 @@ class Gladiator {
 
   hit(anotherGladiator) {
     console.log(`[${this.name} x ${this.currentHealth}] hits [${anotherGladiator.name} x ${anotherGladiator.currentHealth}] with power ${this.power}`);
-    this.readyToHit = false;
-    this.rest(6 - this.currentSpeed);
+    this.isReadyToHit = false;
+    this.rest(6000 - this.currentSpeed * 1000);
     return new Promise((survived, died) => {
       anotherGladiator.takeDamage(this.power);
       if (anotherGladiator.isDead) {
@@ -89,9 +89,13 @@ class Gladiator {
   takeDamage(damage) {
     this.currentHealth = Math.round(this.currentHealth - damage);
     this.currentSpeed = this.initialSpeed * (this.currentHealth / this.initialHealth);
+    
+    if (this.isInBerserkMode)
+      this.currentSpeed *= 3;
+
     if (this.currentHealth >= 15 && this.currentHealth <= 30 && !this.isInBerserkMode) {
       this.goBerserk(); 
-    } else if (this.isInBerserkMode) {
+    } else if ((this.currentHealth < 15 || this.currentHealth > 30) && this.isInBerserkMode) {
       this.calmDown();
     } else if (this.currentHealth <= 0) {
       console.log(`[${this.name}] dying...`)
