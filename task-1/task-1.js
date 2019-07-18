@@ -49,20 +49,26 @@ function checkAges(house) {
   });
 }
 
-const timerOfDoom = setInterval(() => {
-  if (house.length > 0) {
-    house = checkAges(house);
-  } else {
-    clearInterval(timerOfDoom);
-    console.log('The house is all empty now...');
-  }
-}, 1000);
+let timerOfDoom, timerOfNewLife;
 
-const timerOfNewLife = setInterval(() => {
-    const randomAge = getRandBetween(0,50);
-    const randomName = getRandName();
-    house.push(new Person(randomName, randomAge));
-}, 2000);
+function start() {
+  timerOfDoom = setInterval(() => {
+    if (house.length > 0) {
+      house = checkAges(house);
+    } else {
+      clearInterval(timerOfDoom);
+      console.log('The house is all empty now...');
+    }
+  }, 1000);
+  
+  timerOfNewLife = setInterval(() => {
+      const randomAge = getRandBetween(0,50);
+      const randomName = getRandName();
+      house.push(new Person(randomName, randomAge));
+  }, 2000);
+}
+ 
+
 
 function getRandBetween(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
