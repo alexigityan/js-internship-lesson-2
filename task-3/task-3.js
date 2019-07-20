@@ -107,11 +107,12 @@ class Gladiator {
   }
 }
 
+function getRandomOpponent(array, myIndex) {
+  const opponentIndex = getRandBetween(0, array.length - 1);
+  return (opponentIndex == myIndex) ? getRandomOpponent(array, myIndex) : array[opponentIndex];
+}
+
 function battle(gladiators) {
-  function getRandomOpponent(array, myIndex) {
-    const opponentIndex = getRandBetween(0, array.length - 1);
-    return (opponentIndex == myIndex) ? getRandomOpponent(array, myIndex) : array[opponentIndex];
-  }
   const hits = [];
   gladiators.forEach( (gladiator, i) => {
     if(gladiator.isReadyToHit) {
